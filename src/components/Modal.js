@@ -7,9 +7,9 @@ function Modal({ content, onClose }) {
         <p className="text-lg font-semibold mb-4">{content}</p>
         <button
           onClick={onClose}
-          className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300 shadow-md"
+          className="px-6 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition duration-300 shadow-md"
         >
-          OK
+          Confirm
         </button>
       </div>
     </div>

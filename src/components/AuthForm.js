@@ -61,6 +61,9 @@ function AuthForm({ auth, db }) {
       let errorMessage = 'An unexpected error occurred.';
       if (error.code) {
         switch (error.code) {
+          case 'auth/invalid-credential':
+            errorMessage = 'Invalid email or password.'
+            break;
           case 'auth/email-already-in-use':
             errorMessage = 'This email is already in use.';
             break;
@@ -78,7 +81,7 @@ function AuthForm({ auth, db }) {
             errorMessage = 'Too many login attempts. Please try again later.';
             break;
           default:
-            errorMessage = `Authentication failed: ${error.message}`;
+            errorMessage = `Authentication failed: ${errorMessage}`;
         }
       }
       setDisplayError(errorMessage); // Set the inline error message
@@ -87,11 +90,11 @@ function AuthForm({ auth, db }) {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-indigo-200 flex items-center justify-center p-4 font-inter">
+   return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-100 to-blue-200 flex items-center justify-center p-4 font-inter">
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-indigo-800 mb-6">
-          {isLoginMode ? 'Login' : 'Sign Up'}
+        <h2 className="text-2xl font-bold text-center text-teal-800 mb-6">
+          LODING {isLoginMode ? 'Login' : 'Sign Up'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Inline Error Display */}
@@ -100,7 +103,7 @@ function AuthForm({ auth, db }) {
               <span className="block sm:inline">{displayError}</span>
             </div>
           )}
-         {!isLoginMode && (
+          {!isLoginMode && (
             <div>
               <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-1">
                 Nickname
@@ -111,7 +114,7 @@ function AuthForm({ auth, db }) {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 required={!isLoginMode}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent transition duration-200"
               />
             </div>
           )}
@@ -125,10 +128,10 @@ function AuthForm({ auth, db }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent transition duration-200"
             />
           </div>
-         
+          
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -139,7 +142,7 @@ function AuthForm({ auth, db }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent transition duration-200"
             />
           </div>
           {/* Confirm Password field - only for Signup mode */}
@@ -154,14 +157,14 @@ function AuthForm({ auth, db }) {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required={!isLoginMode}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent transition duration-200"
               />
             </div>
           )}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 bg-teal-600 text-white font-semibold rounded-md hover:bg-teal-700 transition duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Processing...' : (isLoginMode ? 'Login' : 'Sign Up')}
           </button>
@@ -178,7 +181,7 @@ function AuthForm({ auth, db }) {
               setNickname('');
               setDisplayError(''); // Clear error message
             }}
-            className="text-indigo-600 hover:text-indigo-800 font-medium transition duration-200"
+            className="text-teal-600 hover:text-teal-800 font-medium transition duration-200"
             disabled={loading}
           >
             {isLoginMode ? 'Sign Up' : 'Login'}

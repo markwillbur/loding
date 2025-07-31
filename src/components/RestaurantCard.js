@@ -44,6 +44,12 @@ function RestaurantCard({ restaurant, userId, userNickname, handleVote, type, us
     return false;
   };
 
+  const isDeleteButtonDisabled = () => {
+    if(userSundayRestaurantsCount < 2 ) return true;
+
+    return false;
+  }
+
   // Determine button text for Sunday restaurants
   const getSundayButtonText = () => {
     if (isVotingClosed) return 'Voting Closed';
@@ -54,23 +60,29 @@ function RestaurantCard({ restaurant, userId, userNickname, handleVote, type, us
     return 'Vote';
   };
 
+  const deleteButtonText = () => {
+    if (userSundayRestaurantsCount < 2) return 'Cannot delete your only listing'
+    return 'Delete'
+  }
+
 
   return (
     <div
       className="bg-white p-5 rounded-lg shadow-md flex flex-col justify-between border border-gray-200 hover:shadow-lg transition duration-300"
     >
       <div>
-        <h4 className="text-lg font-semibold text-indigo-800 mb-2">{restaurant.name}</h4>
-        <p className="text-gray-600 text-sm mb-2">
-          Votes: <span className="font-bold text-lg text-green-600">{restaurant.votes ? restaurant.votes.length : 0}</span>
+        <h4 className="text-2xl font-bold text-teal-800 mb-2">{restaurant.name}</h4>
+        <h5 className="text-gray-500 text-md mb-2">{restaurant.description}</h5>
+        <p className="text-gray-600 text-lg mb-2">
+          Votes: <span className="font-bold text-xl text-green-600">{restaurant.votes ? restaurant.votes.length : 0}</span>
         </p>
-        {restaurant.deadline && (
+        {type !== 'sunday' && restaurant.deadline && (
           <p className="text-gray-500 text-xs mb-3">
             Voting ends: {restaurant.deadline.toLocaleString()}
           </p>
         )}
         <p className="text-gray-500 text-xs mb-3">
-          Added by: <span className="font-mono break-all">{isAddedByUser ? 'You' : restaurant.addedBy}</span>
+          Added by: <span className="font-mono break-all font-bold">{isAddedByUser ? 'You' : restaurant.addedBy}</span>
         </p>
       </div>
       <div className="flex flex-col space-y-2 mt-4">
@@ -78,12 +90,12 @@ function RestaurantCard({ restaurant, userId, userNickname, handleVote, type, us
           onClick={() => handleVote(restaurant.id, restaurant.votes || [], type)}
           className={`w-full py-2 rounded-md font-semibold transition duration-300 shadow-md
             ${hasVoted && type !== 'sunday' // For flexible, red if voted
-              ? 'bg-red-500 text-white hover:bg-red-600'
-              : 'bg-indigo-500 text-white hover:bg-indigo-600'
+              ? 'bg-red-500 text-white hover:bg-red-600 disabled:cursor-not-allowed'
+              : 'bg-teal-500 text-white hover:bg-teal-600'
             }
-            ${type === 'sunday' && isAddedByUser && 'bg-gray-500 text-white cursor-not-allowed'}
-            ${type === 'sunday' && !isAddedByUser && hasVoted && 'bg-red-500 text-white hover:bg-red-600'}
-            ${type === 'sunday' && !isAddedByUser && !hasVoted && hasVotedForOtherSundayRestaurant && 'bg-gray-500 text-white cursor-not-allowed'}
+            ${type === 'sunday' && isAddedByUser && '!bg-gray-500 text-white cursor-not-allowed'}
+            ${type === 'sunday' && !isAddedByUser && hasVoted && 'w-full py-2 !bg-red-500 text-white font-semibold rounded-md hover:!bg-red-600 transition duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed'}
+            ${type === 'sunday' && !isAddedByUser && !hasVoted && hasVotedForOtherSundayRestaurant && 'w-full py-2 bg-gray-300 text-gray-900 font-semibold rounded-md hover:bg-gray-400 transition duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed'}
             ${type === 'sunday' && userSundayRestaurantsCount === 0 && 'bg-gray-500 text-white cursor-not-allowed'}
           `}
           disabled={type === 'sunday' ? isSundayVoteDisabled() : isVotingClosed}
@@ -96,10 +108,10 @@ function RestaurantCard({ restaurant, userId, userNickname, handleVote, type, us
         {isAddedByUser && (
           <button
             onClick={onDeleteClick}
-            className="w-full py-2 bg-gray-300 text-gray-800 font-semibold rounded-md hover:bg-gray-400 transition duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isDeleting}
+            className="w-full py-2 bg-gray-300 text-gray-900 font-semibold rounded-md hover:bg-gray-400 transition duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isDeleteButtonDisabled()}
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? 'Deleting...' : deleteButtonText()}
           </button>
         )}
       </div>

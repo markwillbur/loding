@@ -36,7 +36,9 @@ function App() {
   const [filteredFlexibleRestaurants, setFilteredFlexibleRestaurants] = useState([]); // Filtered for view
 
   const [newSundayRestaurantName, setNewSundayRestaurantName] = useState('');
+  const [newSundayRestaurantDescription, setNewSundayRestaurantDescription] = useState('')
   const [newFlexibleRestaurantName, setNewFlexibleRestaurantName] = useState('');
+  const [newFlexibleRestaurantDescription, setNewFlexibleRestaurantDescription] = useState('')
   const [selectedFlexibleMealType, setSelectedFlexibleMealType] = useState('');
   // State for the date selected when adding a flexible restaurant
   const [selectedFlexibleAddDate, setSelectedFlexibleAddDate] = useState('');
@@ -241,12 +243,12 @@ function App() {
       );
       setSundayRestaurants(currentSundayRestaurants);
 
-      const userAddedCount = currentSundayRestaurants.filter(r => r.addedBy === userId).length;
+      const userAddedCount = currentSundayRestaurants.filter(r => r.addedBy === userNickname).length;
       setUserSundayRestaurantsCount(userAddedCount);
 
       // NEW: Check if user has voted for any non-listed Sunday restaurant
       const userHasVotedForAnyNonListedSunday = currentSundayRestaurants.some(r =>
-        r.addedBy !== userId && // Not their own listed restaurant
+        r.addedBy !== userNickname && // Not their own listed restaurant
         (r.votes || []).includes(userId) // User has voted for it
       );
       setHasVotedForOtherSundayRestaurant(userHasVotedForAnyNonListedSunday);
@@ -264,7 +266,7 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, [db, userId, isLoggedIn, determineWinner]);
+  }, [db, userId, userNickname, isLoggedIn, determineWinner]);
 
   // Filter flexible restaurants whenever flexibleRestaurants or selectedFlexibleViewDate changes
   useEffect(() => {
@@ -300,6 +302,7 @@ function App() {
       const restaurantsColRef = collection(db, `restaurants`);
       await exponentialBackoff(() => addDoc(restaurantsColRef, {
         name: newSundayRestaurantName.trim(),
+        description: newSundayRestaurantDescription,
         votes: [userId], // User's vote is added by default
         createdAt: Timestamp.now(),
         deadline: sundayDeadline,
@@ -308,6 +311,7 @@ function App() {
         weekId: currentWeekMondayId,
       }));
       setNewSundayRestaurantName('');
+      setNewSundayRestaurantDescription('');
       showCustomModal('Sunday restaurant added successfully! Your vote has been automatically cast.');
     } catch (e) {
       console.error("Error adding Sunday restaurant: ", e);
@@ -340,6 +344,7 @@ function App() {
       const restaurantsColRef = collection(db, `restaurants`);
       await exponentialBackoff(() => addDoc(restaurantsColRef, {
         name: newFlexibleRestaurantName.trim(),
+        description: newFlexibleRestaurantDescription,
         votes: [],
         createdAt: Timestamp.now(),
         deadline: calculatedDeadlineDate,
@@ -347,6 +352,7 @@ function App() {
         addedBy: userNickname,
       }));
       setNewFlexibleRestaurantName('');
+      setNewFlexibleRestaurantDescription('');
       setSelectedFlexibleMealType('');
       setSelectedFlexibleAddDate('');
       showCustomModal('Flexible restaurant added successfully!');
@@ -380,7 +386,7 @@ function App() {
         // Find if the user has already voted for ANY other non-listed Sunday restaurant
         const existingVoteForOtherSundayRestaurant = sundayRestaurants.find(r =>
           r.type === 'sunday' &&
-          r.addedBy !== userId && // Not their own listed restaurant
+          r.addedBy !== userNickname && // Not their own listed restaurant
           (r.votes || []).includes(userId) // User has voted for it
         );
 
@@ -430,14 +436,14 @@ function App() {
 
   // Main render logic
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-indigo-200 p-4 sm:p-6 flex flex-col items-center font-inter">
+    <div className="min-h-screen bg-gradient-to-br from-teal-100 to-purple-200 p-4 sm:p-6 flex flex-col items-center font-inter">
       {/* This Modal is now rendered at the top level, always available */}
       {showModal && <Modal content={modalContent} onClose={() => setShowModal(false)} />}
 
       {/* Conditionally render one of the main views based on auth state */}
       {!isAuthReady ? (
         // Loading screen
-        <div className="flex items-center justify-center h-full text-2xl text-indigo-800 font-semibold">
+        <div className="flex items-center justify-center h-full text-2xl text-teal-800 font-semibold">
           Loading application...
         </div>
       ) : !isLoggedIn ? (
@@ -447,7 +453,7 @@ function App() {
         // Main app content ONLY if logged in AND auth is ready
         <div className="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max_w_4xl mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-800">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-teal-800">
               LODING 🍽️
             </h1>
             <button
@@ -462,7 +468,7 @@ function App() {
           </p>
 
           {userId && (
-            <div className="text-center text-sm text-gray-500 mb-4 p-2 bg-indigo-50 rounded-lg">
+            <div className="text-center text-sm text-gray-500 mb-4 p-2 bg-teal-50 rounded-lg">
               <span> Hi, {userNickname}. PROTEIN LODING NA TAYO LODS!</span>
             </div>
           )}
@@ -471,6 +477,8 @@ function App() {
           <AddSundayRestaurantForm
             newSundayRestaurantName={newSundayRestaurantName}
             setNewSundayRestaurantName={setNewSundayRestaurantName}
+            newSundayRestaurantDescription={newSundayRestaurantDescription}
+            setNewSundayRestaurantDescription={setNewSundayRestaurantDescription}
             handleAddSundayRestaurant={handleAddSundayRestaurant}
             userSundayRestaurantsCount={userSundayRestaurantsCount}
             getNextSunday11AM={getNextSunday11AM}
@@ -483,7 +491,7 @@ function App() {
             votingDeadline={sundayVotingDeadline}
           />
 
-          <div className="p-4 bg-red-50 rounded-lg shadow-inner mb-8">
+          <div className="p-4 bg-teal-50 rounded-lg shadow-inner mb-8">
             <h3 className="text-xl font-bold text-gray-700 mb-4">Sunday Restaurants</h3>
             {sundayRestaurants.length === 0 ? (
               <p className="text-center text-gray-500">No restaurants added for this Sunday yet.</p>
@@ -513,6 +521,8 @@ function App() {
         <AddFlexibleRestaurantForm
           newFlexibleRestaurantName={newFlexibleRestaurantName}
           setNewFlexibleRestaurantName={setNewFlexibleRestaurantName}
+          newFlexibleRestaurantDescription={newFlexibleRestaurantDescription}
+          setNewFlexibleRestaurantDescription={setNewFlexibleRestaurantDescription}
           selectedFlexibleMealType={selectedFlexibleMealType}
           setSelectedFlexibleMealType={setSelectedFlexibleMealType}
           selectedFlexibleAddDate={selectedFlexibleAddDate}
@@ -538,7 +548,7 @@ function App() {
               id="viewDate"
               value={selectedFlexibleViewDate}
               onChange={(e) => setSelectedFlexibleViewDate(e.target.value)}
-              className="p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 flex-shrink-0"
+              className="p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent transition duration-200 flex-shrink-0"
               title="Select date to view restaurants"
             />
           </div>

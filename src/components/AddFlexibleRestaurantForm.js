@@ -3,6 +3,8 @@ import React from 'react';
 function AddFlexibleRestaurantForm({
   newFlexibleRestaurantName,
   setNewFlexibleRestaurantName,
+  newFlexibleRestaurantDescription,
+  setNewFlexibleRestaurantDescription,
   selectedFlexibleAddDate,
   setSelectedFlexibleAddDate,
   selectedFlexibleMealType,
@@ -25,9 +27,20 @@ function AddFlexibleRestaurantForm({
           onChange={(e) => setNewFlexibleRestaurantName(e.target.value)}
           // Added w-full for small screens, sm:flex-grow for larger, and min-w-0
           className="w-full sm:flex-grow p-3 border border-indigo-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 min-w-0"
+       
+       />
+      </div>
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <textarea
+          placeholder="Optional description (Church muna 12:00PM tas alampong after...)"
+          value={newFlexibleRestaurantDescription}
+          onChange={(e) => setNewFlexibleRestaurantDescription(e.target.value)}
+          className="flex-grow p-3 border border-indigo-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+
         />
+      </div>
         {/* NEW: Wrapper div for Date and Mealtime to keep them beside each other */}
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto sm:flex-grow">
+      <div className="mb-6 flex flex-col sm:flex-row gap-4 w-full sm:w-auto sm:flex-grow">
           <input
               type='date'
               value={selectedFlexibleAddDate}
@@ -48,10 +61,11 @@ function AddFlexibleRestaurantForm({
             <option value="dinner">Dinner (5:30 PM)</option>
           </select>
         </div>
+      <div>
         <button
           onClick={handleAddFlexibleRestaurant}
           // Added w-full for small screens, sm:w-auto to reset width on sm, and flex-shrink-0
-          className="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition duration-300 shadow-lg flex-shrink-0"
+          className="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition duration-300 shadow-lg flex-shrink-0"
         >
           Add Flexible Restaurant
         </button>
