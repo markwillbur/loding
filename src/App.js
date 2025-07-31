@@ -304,7 +304,7 @@ function App() {
         createdAt: Timestamp.now(),
         deadline: sundayDeadline,
         type: 'sunday',
-        addedBy: userId,
+        addedBy: userNickname,
         weekId: currentWeekMondayId,
       }));
       setNewSundayRestaurantName('');
@@ -344,7 +344,7 @@ function App() {
         createdAt: Timestamp.now(),
         deadline: calculatedDeadlineDate,
         type: 'flexible',
-        addedBy: userId,
+        addedBy: userNickname,
       }));
       setNewFlexibleRestaurantName('');
       setSelectedFlexibleMealType('');
@@ -496,6 +496,7 @@ function App() {
                       key={restaurant.id}
                       restaurant={restaurant}
                       userId={userId}
+                      userNickname={userNickname}
                       handleVote={handleVote}
                       type="sunday"
                       userSundayRestaurantsCount={userSundayRestaurantsCount}
@@ -554,6 +555,7 @@ function App() {
                     key={restaurant.id}
                     restaurant={restaurant}
                     userId={userId}
+                    userNickname={userNickname}
                     handleVote={handleVote}
                     type="flexible"
                     handleDelete={handleDeleteRestaurant}

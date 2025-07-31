@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-function RestaurantCard({ restaurant, userId, handleVote, type, userSundayRestaurantsCount, getNextSunday11AM, handleDelete, hasVotedForOtherSundayRestaurant }) { // Added hasVotedForOtherSundayRestaurant
+function RestaurantCard({ restaurant, userId, userNickname, handleVote, type, userSundayRestaurantsCount, getNextSunday11AM, handleDelete, hasVotedForOtherSundayRestaurant }) { // Added hasVotedForOtherSundayRestaurant
   const hasVoted = (restaurant.votes || []).includes(userId);
   const isVotingClosed = restaurant.deadline && new Date() > restaurant.deadline;
   const isSundayAddFirstDisabled = type === 'sunday' && userSundayRestaurantsCount === 0; // This check is mostly for the add button now
-  const isAddedByUser = restaurant.addedBy === userId; // Check if the current user added the restaurant
+  const isAddedByUser = restaurant.addedBy === userNickname; // Check if the current user added the restaurant
 
   const [isDeleting, setIsDeleting] = useState(false); // Local state for delete loading
 
